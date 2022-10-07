@@ -1,0 +1,22 @@
+{
+  "name": "autovocab",
+  "version": "1.0.0",
+  "description": "A program to automatically create google slides with the definition, sentence, and image of a vocab word",
+  "main": "index.js",
+  "scripts": {
+    "test": "node ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Catalystiq/AutoVocab"
+  },
+  "author": "Catalystic",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Catalystiq/AutoVocab/issues"
+  },
+  "homepage": "https://github.com/Catalystiq/AutoVocab#readme",
+  "dependencies": {
+    "googleapis": "^108.0.0"
+  }
+}
