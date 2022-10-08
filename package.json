@@ -4,7 +4,8 @@
   "description": "A program to automatically create google slides with the definition, sentence, and image of a vocab word",
   "main": "index.js",
   "scripts": {
-    "test": "node ."
+    "test": "node .",
+    "start": "nodemon ."
   },
   "repository": {
     "type": "git",
@@ -12,11 +13,19 @@
   },
   "author": "Catalystic",
   "license": "ISC",
+  "type": "module",
   "bugs": {
     "url": "https://github.com/Catalystiq/AutoVocab/issues"
   },
   "homepage": "https://github.com/Catalystiq/AutoVocab#readme",
   "dependencies": {
-    "googleapis": "^108.0.0"
+    "chalk": "^5.1.0",
+    "dotenv": "^16.0.3",
+    "googleapis": "^108.0.0",
+    "node-fetch": "^3.2.10",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
   }
 }
