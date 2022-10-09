@@ -23,6 +23,7 @@
     "dotenv": "^16.0.3",
     "googleapis": "^108.0.0",
     "node-fetch": "^3.2.10",
+    "unsplash-js": "^7.0.15",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
