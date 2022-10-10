@@ -85,9 +85,9 @@ const words = [
 req.push(createTitleSlide(titleText, subtitleText))
 
 
-for(let i = 0; i < 5; i++){
+for(let i = 0; i < words.length; i++){
     const word = words[i]
-    req.push(createVocabSlide(word, await getDefinition(word), 'sen', await getImage(word)))
+    req.push(createVocabSlide(word, await getDefinition(word), '', await getImage(word)))
 }
 makeBatchUpdate(process.env.PRESENTATION_ID, req)
 
@@ -130,7 +130,7 @@ async function getImage(word) {
 
 	if (!image.response.results[0]) {
         const response = await fetch(
-            `https://dictionaryapi.com/api/v3/references/thesaurus/json/${word}?key=${process.env.THESAURUS_KEY}`
+            `https://dictionaryapi.com/api/v3/references/ithesaurus/json/${word}?key=${process.env.ITHESAURUS_KEY}`
         )
         const json = await response.json()
         let synonyms = json[0].meta.syns[0]
