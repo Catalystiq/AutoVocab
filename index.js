@@ -24,55 +24,66 @@ const unsplash = createApi({
 })
 
 //variables
-const titleText = 'Vocab #3'
+const titleText = 'Vocab #4'
 const subtitleText = 'James Nelson 11A'
 let req = []
 const words = [
-    'Nonchalant',
-    'Dilatory',
-    'Superfluous',
-    'Condescend',
-    'Acrimony',
-    'Prodigious',
-    'Daunt',
-    'Tedious',
-    'Mediocre',
-    'Mandate',
-    'Resignation',
-    'Nurture',
-    'Fervent',
-    'Eclectic',
-    'Composed',
-    'Versatile',
-    'Scathing',
-    'Eloquent',
-    'Commend',
-    'Ecstasy',
+    'Despair',
+    'Exonerate',
+    'Juxtapose',
+    'Evasive',
+    'Cursory',
+    'Disparage',
+    'Elite',
+    'Bane',
+    'Defer',
+    'Averse',
+    'Enmity',
+    'Guile',
+    'Dogmatic',
+    'Warrant',
+    'Frenetic',
+    'Convoluted',
+    'Plausible',
+    'Hail',
+    //'Enunciate',
+    //'Felicity'
 ]
 
 // create the slides
 req.push(createTitleSlide(titleText, subtitleText))
 
-for(let i = 0; i < words.length; i++){
+const testImage = 'https://webhostingmedia.net/wp-content/uploads/2018/01/http-error-404-not-found.png'
+
+for(let i = words.length-1; i < words.length; i++){
     const word = words[i]
     req.push(createVocabSlide(word, await getDefinition(word), await getSentence(word), await getImage(word)))
     //console.log(typeof await getDefinition(word))
 }
 makeBatchUpdate(process.env.PRESENTATION_ID, req)
 
+//get the definition for the vocab word
 async function getDefinition(word){
     console.log(chalk.blue('fetching definition for'), chalk.magenta(word))
 
-
+    //fetch the definition from merriam webster
     const response = await fetch(
 		`https://dictionaryapi.com/api/v3/references/learners/json/${word}?key=${process.env.LEARNERS_KEY}`
 	)
     const json = await response.json()
-	return json[0].shortdef[0]
+	
+    //if the definition cant be found
+    if(json[0].shortdef[0]){
+        return json[0].shortdef[0]
+    }else{
+        console.log(chalk.red(`no definition found for ${word}`))
+    }
 }
 
+//get the sentence for the vocab word
 async function getSentence(word){
 
+    //fetch the sentence of the word from WordsAPI
     const url = `https://wordsapiv1.p.rapidapi.com/words/${word.toLowerCase()}/examples`;
     let result
 
@@ -94,15 +105,19 @@ async function getSentence(word){
             console.log(chalk.green(`fetching sentence for`), chalk.magenta(`${word}`))
             result =  json.examples[0]
         })
-        .catch(err => console.error('error:' + err))
+        .catch(err => console.error(chalk.red(`no sentence found for ${word} error: ${err}`)))
     return result
 
+    //if the sentence cant be found for a word, use a synonym for the sentence
     async function getSynonyms(word){
+        //fetch synonyms of the word
         const response = await fetch(
-            `https://dictionaryapi.com/api/v3/references/ithesaurus/json/${word}?key=${process.env.ITHESAURUS_KEY}`
+            `https://dictionaryapi.com/api/v3/references/thesaurus/json/${word}?key=${process.env.THESAURUS_KEY}`
         )
         const json = await response.json()
         let synonyms = json[0].meta.syns[0]
+
+        //fetch new sentence
         for(let i = synonyms.length-1; i > 0; i--){
             const url = `https://wordsapiv1.p.rapidapi.com/words/${synonyms[i]}/examples`;
         
@@ -118,12 +133,13 @@ async function getSentence(word){
                 .then(res => res.json())
                 .then(json => {
                     if(json.examples[0] != undefined){
+                        //use regex to replace the synonym with the vocab word
                         let regex = new RegExp(`${synonyms[i]}`, 'gmi')
                         let subst = `${word.toLowerCase()}` 
                         result =  json.examples[0].replace(regex, subst)
                     }
                 })
-                .catch(err => console.error('error:' + err))
+                .catch(err => console.error(chalk.red(`no sentence found for ${word} error: ${err}`)))
         }
     }
 }
@@ -131,6 +147,7 @@ async function getSentence(word){
 async function getImage(word) {
 	console.log(chalk.blue('Fetching image for'), chalk.blueBright(word))
 
+    //find image for the vocab word
 	let image = await unsplash.search.getPhotos({
 		query: word,
 		page: 1,
@@ -145,13 +162,16 @@ async function getImage(word) {
 		return
 	}
 
+    //if no results for the image are found from unsplash
 	if (!image.response.results[0]) {
+        //find a synonym using merriam webster
         const response = await fetch(
-            `https://dictionaryapi.com/api/v3/references/ithesaurus/json/${word}?key=${process.env.ITHESAURUS_KEY}`
+            `https://dictionaryapi.com/api/v3/references/thesaurus/json/${word}?key=${process.env.THESAURUS_KEY}`
         )
         const json = await response.json()
         let synonyms = json[0].meta.syns[0]
-        //console.log(synonyms)
+
+        //loop through the synonyms until an image is found
         for(let i = 0; i < synonyms.length; i++){
             let image = await unsplash.search.getPhotos({
                 query: synonyms[i],
@@ -168,11 +188,9 @@ async function getImage(word) {
             }
         }
 
-
-
-
         //if no image is found for the word
 		console.log(chalk.red('no image found for ' + word))
+
 		// use default image
 		return 'https://webhostingmedia.net/wp-content/uploads/2018/01/http-error-404-not-found.png'
 	}
@@ -180,9 +198,11 @@ async function getImage(word) {
 	return image.response.results[0].urls.regular
 }
 
+//create the title slide for the presentation
 function createTitleSlide(titleText, subtitleText){
     console.log(chalk.cyanBright('creating title for presentation'))
 
+    //uuids for the components
     const titleSlideId = uuid()
     const titleTextId = uuid()
     const subtitleTextId = uuid()
@@ -223,17 +243,20 @@ function createTitleSlide(titleText, subtitleText){
     return titleSlideReq
 }
 
+//create the vocab slide for each word in the presentation
 function createVocabSlide(vocabText, bodyText, sentenceText, imageUrl){
     console.log(
         chalk.white("creating slide for word"),
         chalk.magenta(vocabText)
     )
 
+    //uuids of the components
     const vocabSlideId = uuid()
     const vocabTextId = uuid()
     const bodyTextId = uuid()
-    const imageId= uuid()
+    const imageId = uuid()
 
+    //units for the components
     const emu4M = {
 		magnitude: 4000000,
 		unit: 'EMU',
@@ -295,6 +318,7 @@ function createVocabSlide(vocabText, bodyText, sentenceText, imageUrl){
     return vocabSlideReq
 }
 
+//make the batch update to the google slides api
 function makeBatchUpdate(presentationId, req){
     console.log(chalk.greenBright('Making Slides Batch Update'))
     slides.presentations.batchUpdate({
