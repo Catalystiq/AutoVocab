@@ -283,7 +283,7 @@ function createVocabSlide(vocabText, bodyText, sentenceText, imageUrl){
 					transform: {
 						scaleX: 1,
 						scaleY: 1,
-						translateX: 405,
+						translateX: 400,
 						translateY: 140,
 						unit: 'PT',
 					},
