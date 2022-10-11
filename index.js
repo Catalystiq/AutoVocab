@@ -88,7 +88,7 @@ async function getSentence(word){
         .then(res => res.json())
         .then(async json => {
             if(json.examples[0] == undefined){
-                console.log(chalk.yellow('fetching definition for synonym of'), chalk.magenta(`${word}`))
+                console.log(chalk.yellow('fetching sentence for synonym of'), chalk.magenta(`${word}`))
                 return await getSynonyms(word)
             }
             console.log(chalk.green(`fetching sentence for`), chalk.magenta(`${word}`))
@@ -103,7 +103,7 @@ async function getSentence(word){
         )
         const json = await response.json()
         let synonyms = json[0].meta.syns[0]
-        for(let i = synonyms.length; i > 0; i--){
+        for(let i = synonyms.length-1; i > 0; i--){
             const url = `https://wordsapiv1.p.rapidapi.com/words/${synonyms[i]}/examples`;
         
             const options = {
@@ -283,7 +283,7 @@ function createVocabSlide(vocabText, bodyText, sentenceText, imageUrl){
 					transform: {
 						scaleX: 1,
 						scaleY: 1,
-						translateX: 400,
+						translateX: 402.5,
 						translateY: 140,
 						unit: 'PT',
 					},
