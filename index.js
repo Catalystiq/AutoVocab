@@ -4,7 +4,6 @@ import { v4 as uuid } from 'uuid'
 import chalk from 'chalk'
 import fetch from 'node-fetch'
 import * as dotenv from 'dotenv'
-import https from 'https'
 import { createApi } from 'unsplash-js'
 dotenv.config()
 
@@ -28,7 +27,6 @@ const unsplash = createApi({
 const titleText = 'Vocab #3'
 const subtitleText = 'James Nelson 11A'
 let req = []
-let sentences = []
 const words = [
     'Nonchalant',
     'Dilatory',
@@ -52,49 +50,15 @@ const words = [
     'Ecstasy',
 ]
 
-//get sentences
-// for(let i = 0; i < words.length; i++){
-//     const word = words[i]
-//     const app_id = process.env.OXFORD_APP_ID
-//     const app_key = process.env.OXFORD_APP_KEY
-//     const wordId = word
-//     const fields = "examples"
-//     const strictMatch = "false"
-//     const options = {
-//     host: 'od-api.oxforddictionaries.com',
-//     port: '443',
-//     path: '/api/v2/entries/en-gb/' + wordId + '?fields=' + fields + '&strictMatch=' + strictMatch,
-//     method: "GET",
-//     headers: {
-//         'app_id': app_id,
-//         'app_key': app_key
-//     }
-//     };
-//     https.get(options, (resp) => {
-//         let body = ''
-//         resp.on('data', (d) => {
-//             body += d
-//         });
-//         resp.on('end', () => {
-//            sentences.push(JSON.parse(body).results[0].lexicalEntries[0].entries[0].senses[0].examples[0].text)
-//         });
-//     });
-// }
-
 // create the slides
 req.push(createTitleSlide(titleText, subtitleText))
 
-
 for(let i = 0; i < words.length; i++){
     const word = words[i]
-    req.push(createVocabSlide(word, await getDefinition(word), '', await getImage(word)))
+    req.push(createVocabSlide(word, await getDefinition(word), await getSentence(word), await getImage(word)))
+    //console.log(typeof await getDefinition(word))
 }
 makeBatchUpdate(process.env.PRESENTATION_ID, req)
-
-
-
-
-
 
 async function getDefinition(word){
     console.log(chalk.blue('fetching definition for'), chalk.magenta(word))
@@ -107,8 +71,61 @@ async function getDefinition(word){
 	return json[0].shortdef[0]
 }
 
-function getSentence(word){
-    
+async function getSentence(word){
+
+    const url = `https://wordsapiv1.p.rapidapi.com/words/${word.toLowerCase()}/examples`;
+    let result
+
+    const options = {
+        method: 'GET',
+        headers: {
+            'X-RapidAPI-Key': process.env.WORDSAPI_KEY,
+            'X-RapidAPI-Host': 'wordsapiv1.p.rapidapi.com'
+        }
+    }
+
+    await fetch(url, options)
+        .then(res => res.json())
+        .then(async json => {
+            if(json.examples[0] == undefined){
+                console.log(chalk.yellow('fetching definition for synonym of'), chalk.magenta(`${word}`))
+                return await getSynonyms(word)
+            }
+            console.log(chalk.green(`fetching sentence for`), chalk.magenta(`${word}`))
+            result =  json.examples[0]
+        })
+        .catch(err => console.error('error:' + err))
+    return result
+
+    async function getSynonyms(word){
+        const response = await fetch(
+            `https://dictionaryapi.com/api/v3/references/ithesaurus/json/${word}?key=${process.env.ITHESAURUS_KEY}`
+        )
+        const json = await response.json()
+        let synonyms = json[0].meta.syns[0]
+        for(let i = synonyms.length; i > 0; i--){
+            const url = `https://wordsapiv1.p.rapidapi.com/words/${synonyms[i]}/examples`;
+        
+            const options = {
+                method: 'GET',
+                headers: {
+                    'X-RapidAPI-Key': process.env.WORDSAPI_KEY,
+                    'X-RapidAPI-Host': 'wordsapiv1.p.rapidapi.com'
+                }
+            }
+
+            await fetch(url, options)
+                .then(res => res.json())
+                .then(json => {
+                    if(json.examples[0] != undefined){
+                        let regex = new RegExp(`${synonyms[i]}`, 'gmi')
+                        let subst = `${word.toLowerCase()}` 
+                        result =  json.examples[0].replace(regex, subst)
+                    }
+                })
+                .catch(err => console.error('error:' + err))
+        }
+    }
 }
 
 async function getImage(word) {
@@ -154,8 +171,8 @@ async function getImage(word) {
 
 
 
-
-		//console.log(chalk.red('no image found for ' + word))
+        //if no image is found for the word
+		console.log(chalk.red('no image found for ' + word))
 		// use default image
 		return 'https://webhostingmedia.net/wp-content/uploads/2018/01/http-error-404-not-found.png'
 	}
@@ -266,9 +283,9 @@ function createVocabSlide(vocabText, bodyText, sentenceText, imageUrl){
 					transform: {
 						scaleX: 1,
 						scaleY: 1,
-						translateX: 5_000_000,
-						translateY: 1_500_000,
-						unit: 'EMU',
+						translateX: 405,
+						translateY: 140,
+						unit: 'PT',
 					},
 				},
 			},
