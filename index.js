@@ -28,34 +28,57 @@ const titleText = 'Vocab #4'
 const subtitleText = 'James Nelson 11A'
 let req = []
 const words = [
-    'Despair',
-    'Exonerate',
-    'Juxtapose',
-    'Evasive',
-    'Cursory',
-    'Disparage',
-    'Elite',
-    'Bane',
-    'Defer',
-    'Averse',
-    'Enmity',
-    'Guile',
-    'Dogmatic',
-    'Warrant',
-    'Frenetic',
-    'Convoluted',
-    'Plausible',
-    'Hail',
-    //'Enunciate',
-    //'Felicity'
+    'Nonchalant',
+    'Dilatory',
+    'Superfluous',
+    'Condescend',
+    'Acrimony',
+    'Prodigious',
+    'Daunt',
+    'Tedious',
+    'Mediocre',
+    'Mandate',
+    'Resignation',
+    'Nurture',
+    'Fervent',
+    'Eclectic',
+    'Composed',
+    'Versatile',
+    'Scathing',
+    'Eloquent',
+    'Commend',
+    'Ecstasy'
 ]
+
+// const words = [
+//     'Despair',
+//     'Exonerate',
+//     'Juxtapose',
+//     'Evasive',
+//     'Cursory',
+//     'Disparage',
+//     'Elite',
+//     'Bane',
+//     'Defer',
+//     'Averse',
+//     'Enmity',
+//     'Guile',
+//     'Dogmatic',
+//     'Warrant',
+//     'Frenetic',
+//     'Convoluted',
+//     'Plausible',
+//     'Hail',
+//     //'Enunciate',
+//     //'Felicity'
+// ]
 
 // create the slides
 req.push(createTitleSlide(titleText, subtitleText))
 
 const testImage = 'https://webhostingmedia.net/wp-content/uploads/2018/01/http-error-404-not-found.png'
 
-for(let i = words.length-1; i < words.length; i++){
+for(let i = 0; i < words.length; i++){
     const word = words[i]
     req.push(createVocabSlide(word, await getDefinition(word), await getSentence(word), await getImage(word)))
     //console.log(typeof await getDefinition(word))
