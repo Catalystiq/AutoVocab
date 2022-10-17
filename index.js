@@ -27,51 +27,29 @@ const unsplash = createApi({
 const titleText = 'Vocab #4'
 const subtitleText = 'James Nelson 11A'
 let req = []
-const words = [
-    'Nonchalant',
-    'Dilatory',
-    'Superfluous',
-    'Condescend',
-    'Acrimony',
-    'Prodigious',
-    'Daunt',
-    'Tedious',
-    'Mediocre',
-    'Mandate',
-    'Resignation',
-    'Nurture',
-    'Fervent',
-    'Eclectic',
-    'Composed',
-    'Versatile',
-    'Scathing',
-    'Eloquent',
-    'Commend',
-    'Ecstasy'
-]
 
-// const words = [
-//     'Despair',
-//     'Exonerate',
-//     'Juxtapose',
-//     'Evasive',
-//     'Cursory',
-//     'Disparage',
-//     'Elite',
-//     'Bane',
-//     'Defer',
-//     'Averse',
-//     'Enmity',
-//     'Guile',
-//     'Dogmatic',
-//     'Warrant',
-//     'Frenetic',
-//     'Convoluted',
-//     'Plausible',
-//     'Hail',
-//     //'Enunciate',
-//     //'Felicity'
-// ]
+const words = [
+    'Despair',
+    'Exonerate',
+    'Juxtapose',
+    'Evasive',
+    'Cursory',
+    'Disparage',
+    'Elite',
+    'Bane',
+    'Defer',
+    'Averse',
+    'Enmity',
+    'Guile',
+    'Dogmatic',
+    'Warrant',
+    'Frenetic',
+    'Convoluted',
+    'Plausible',
+    'Hail',
+    //'Enunciate',
+    //'Felicity'
+]
 
 // create the slides
 req.push(createTitleSlide(titleText, subtitleText))
@@ -93,13 +71,19 @@ async function getDefinition(word){
     const response = await fetch(
 		`https://dictionaryapi.com/api/v3/references/learners/json/${word}?key=${process.env.LEARNERS_KEY}`
 	)
-    const json = await response.json()
+    let json = await response.json()
 	
     //if the definition cant be found
     if(json[0].shortdef[0]){
         return json[0].shortdef[0]
     }else{
-        console.log(chalk.red(`no definition found for ${word}`))
+        console.log(chalk.cyan('fetching collegiate definition for'), chalk.magenta(`${word}`))
+
+        const response = await fetch(
+            `https://dictionaryapi.com/api/v3/references/collegiate/json/${word}?key=${process.env.DICTIONARY_KEY}`
+        )
+        json = await response.json()
+        return json[0].shortdef[0]
     }
 }
 
