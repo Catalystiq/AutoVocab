@@ -24,31 +24,31 @@ const unsplash = createApi({
 })
 
 //variables
-const titleText = 'Vocab #4'
+const titleText = 'Vocab #6'
 const subtitleText = 'James Nelson 11A'
 let req = []
 
 const words = [
-    'Despair',
-    'Exonerate',
-    'Juxtapose',
-    'Evasive',
-    'Cursory',
-    'Disparage',
-    'Elite',
-    'Bane',
-    'Defer',
-    'Averse',
-    'Enmity',
-    'Guile',
-    'Dogmatic',
-    'Warrant',
-    'Frenetic',
-    'Convoluted',
-    'Plausible',
-    'Hail',
-    //'Enunciate',
-    //'Felicity'
+    // 'Cacophony',
+    // 'Clairvoyance',
+    // 'Incisive',
+    // 'Benign',
+    // 'Vacillate',
+    'Obstreperous',
+    'Belittle',
+    'Voluminous',
+    'Archaic',
+    'Patronize',
+    // 'Incontrovertible',
+    // 'Precarious',
+    // 'Dismiss',
+    // 'Obstinate',
+    // 'Dissipate',
+    // 'Circumvent',
+    // 'Indignation',
+    // 'Penitent',
+    // 'Genial',
+    // 'Incorrigible',
 ]
 
 // create the slides
@@ -166,7 +166,7 @@ async function getImage(word) {
 	if (image.errors) {
 		// error occured
 		console.log(chalk.red('error occured: ' + image.errors[0]))
-		return
+		return 'https://webhostingmedia.net/wp-content/uploads/2018/01/http-error-404-not-found.png'
 	}
 
     //if no results for the image are found from unsplash
@@ -190,6 +190,10 @@ async function getImage(word) {
             if(image.response.results[0]){
                 console.log(chalk.yellow(`fetching image for synonym: ${synonyms[i]}`))
                 return image.response.results[0].urls.regular
+            }else if(image.errors){
+                // error occured
+                console.log(chalk.red('error occured: ' + image.errors[0]))
+                return 'https://webhostingmedia.net/wp-content/uploads/2018/01/http-error-404-not-found.png'
             }else{
                 continue
             }
