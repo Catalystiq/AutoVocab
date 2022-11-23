@@ -24,31 +24,31 @@ const unsplash = createApi({
 })
 
 //variables
-const titleText = 'Vocab #6'
+const titleText = 'Vocab #7'
 const subtitleText = 'James Nelson 11A'
 let req = []
 
 const words = [
-    'Cacophony',
-    'Clairvoyance',
-    'Incisive',
-    'Benign',
-    'Vacillate',
-    'Obstreperous',
-    'Belittle',
-    'Voluminous',
-    'Archaic',
-    'Patronize',
-    'Incontrovertible',
-    'Precarious',
-    'Dismiss',
-    'Obstinate',
-    'Dissipate',
-    'Circumvent',
-    'Indignation',
-    'Penitent',
-    'Genial',
-    'Incorrigible',
+    'Assiduous',
+    'Ominous',
+    'Quell',
+    'Manifest',
+    'Bemuse',
+    'Estrange',
+    'Supplant',
+    'Notorious',
+    'Adulation',
+    'Admonish',
+    'Concur',
+    'Complicity',
+    'Poignant',
+    'Cunning',
+    'Ascertain',
+    'Morose',
+    'Rebuke',
+    'Reciprocate',
+    'Renounce',
+    'Concede'
 ]
 
 // create the slides
